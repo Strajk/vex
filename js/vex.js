@@ -62,9 +62,9 @@
         }
         options.$vex.append(options.$vexOverlay);
         if (options.headline) {
-          options.$vexHeadline = $('<div>').addClass(vex.baseClassNames.headline).append('<strong>' + options.headline + '</strong>');
+          options.$vexHeadline = $('<div>').addClass(vex.baseClassNames.headline).append(options.headline);
         } else {
-          options.$vex.addClass("no-headline");
+          options.$vex.addClass("_no-header");
         }
         options.$vexContent = $('<div>').addClass(vex.baseClassNames.content).addClass(options.contentClassName).css(options.contentCSS).append(options.$vexHeadline).append(options.content).data({
           vex: options

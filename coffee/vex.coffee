@@ -23,7 +23,7 @@ vexFactory = ($) ->
 
         baseClassNames:
             vex: 'vex'
-            headline: 'vex-headline'
+            headline: 'vex-header'
             content: 'vex-content'
             overlay: 'vex-overlay'
             close: 'vex-close'
@@ -80,9 +80,9 @@ vexFactory = ($) ->
             if options.headline
                 options.$vexHeadline = $('<div>')
                     .addClass(vex.baseClassNames.headline)
-                    .append('<strong>' + options.headline + '</strong>');
+                    .append(options.headline);
             else
-                options.$vex.addClass("no-headline");
+                options.$vex.addClass("_no-header");
 
 
             options.$vexContent = $('<div>')
