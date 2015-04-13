@@ -19,7 +19,7 @@
       animationEndEvent: 'animationend webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend',
       baseClassNames: {
         vex: 'vex',
-        headline: 'vex-headline',
+        headline: 'vex-header',
         content: 'vex-content',
         overlay: 'vex-overlay',
         close: 'vex-close',
