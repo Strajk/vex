@@ -19,6 +19,7 @@
       animationEndEvent: 'animationend webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend',
       baseClassNames: {
         vex: 'vex',
+        headline: 'vex-headline',
         content: 'vex-content',
         overlay: 'vex-overlay',
         close: 'vex-close',
@@ -26,6 +27,7 @@
         open: 'vex-open'
       },
       defaultOptions: {
+        headline: '',
         content: '',
         showCloseButton: true,
         escapeButtonCloses: true,
@@ -59,7 +61,12 @@
           });
         }
         options.$vex.append(options.$vexOverlay);
-        options.$vexContent = $('<div>').addClass(vex.baseClassNames.content).addClass(options.contentClassName).css(options.contentCSS).append(options.content).data({
+        if (options.headline) {
+          options.$vexHeadline = $('<div>').addClass(vex.baseClassNames.headline).append('<strong>' + options.headline + '</strong>');
+        } else {
+          options.$vex.addClass("no-headline");
+        }
+        options.$vexContent = $('<div>').addClass(vex.baseClassNames.content).addClass(options.contentClassName).css(options.contentCSS).append(options.$vexHeadline).append(options.content).data({
           vex: options
         });
         options.$vex.append(options.$vexContent);

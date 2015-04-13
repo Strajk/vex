@@ -23,6 +23,7 @@ vexFactory = ($) ->
 
         baseClassNames:
             vex: 'vex'
+            headline: 'vex-headline'
             content: 'vex-content'
             overlay: 'vex-overlay'
             close: 'vex-close'
@@ -30,6 +31,7 @@ vexFactory = ($) ->
             open: 'vex-open'
 
         defaultOptions:
+            headline: ''
             content: ''
             showCloseButton: true
             escapeButtonCloses: true
@@ -75,10 +77,19 @@ vexFactory = ($) ->
 
             # Content
 
+            if options.headline
+                options.$vexHeadline = $('<div>')
+                    .addClass(vex.baseClassNames.headline)
+                    .append('<strong>' + options.headline + '</strong>');
+            else
+                options.$vex.addClass("no-headline");
+
+
             options.$vexContent = $('<div>')
                 .addClass(vex.baseClassNames.content)
                 .addClass(options.contentClassName)
                 .css(options.contentCSS)
+                .append(options.$vexHeadline)
                 .append(options.content)
                 .data(vex: options)
 
