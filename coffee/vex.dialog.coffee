@@ -19,15 +19,15 @@ vexDialogFactory = ($, vex) ->
         YES:
             text: 'OK'
             type: 'submit'
-            className: 'vex-dialog-button-primary'
+            className: 'btn _primary'
 
         NO:
             text: 'Cancel'
             type: 'button'
-            className: 'vex-dialog-button-secondary'
-            click: ($vexContent, event) ->
-                $vexContent.data().vex.value = false
-                vex.close $vexContent.data().vex.id
+            className: 'btn _secondary'
+            click: ($vexWrapper, event) ->
+                $vexWrapper.data().vex.value = false
+                vex.close $vexWrapper.data().vex.id
 
     dialog.defaultOptions =
         callback: (value) ->
@@ -42,14 +42,15 @@ vexDialogFactory = ($, vex) ->
         showCloseButton: false
         onSubmit: (event) ->
             $form = $ @
-            $vexContent = $form.parent()
+            $vexWrapper = $form.parent()
             event.preventDefault()
             event.stopPropagation()
-            $vexContent.data().vex.value = dialog.getFormValueOnSubmit $formToObject $form
-            vex.close $vexContent.data().vex.id
+            $vexWrapper.data().vex.value = dialog.getFormValueOnSubmit $formToObject $form
+            vex.close $vexWrapper.data().vex.id
         focusFirstInput: true
 
     dialog.defaultAlertOptions =
+        className: '_alert'
         message: 'Alert'
         buttons: [
             dialog.buttons.YES
@@ -60,19 +61,21 @@ vexDialogFactory = ($, vex) ->
 
     dialog.open = (options) ->
         options = $.extend {}, vex.defaultOptions, dialog.defaultOptions, options
-        options.content = dialog.buildDialogForm options
+        body = dialog.buildDialogForm options
+        options.wrapper = $('<div>').addClass(vex.baseClassNames.body)
+        options.wrapper.append body
 
         beforeClose = options.beforeClose
-        options.beforeClose = ($vexContent, config) ->
+        options.beforeClose = ($vexWrapper, config) ->
             options.callback config.value
-            beforeClose? $vexContent, config
+            beforeClose? $vexWrapper, config
 
-        $vexContent = vex.open options
+        $vexWrapper = vex.open options
 
         if options.focusFirstInput
-            $vexContent.find('button[type="submit"], button[type="button"], input[type="submit"], input[type="button"], textarea, input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="email"], input[type="month"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="time"], input[type="url"], input[type="week"]').first().focus()
+            $vexWrapper.find('button[type="submit"], button[type="button"], input[type="submit"], input[type="button"], textarea, input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="email"], input[type="month"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="time"], input[type="url"], input[type="week"]').first().focus()
 
-        return $vexContent
+        return $vexWrapper
 
     dialog.alert = (options) ->
         if typeof options is 'string'
@@ -125,13 +128,13 @@ vexDialogFactory = ($, vex) ->
             return formData
 
     dialog.buttonsToDOM = (buttons) ->
-        $buttons = $('<div class="vex-dialog-buttons" />')
+        $buttons = $('<div class="vex-actions" />')
 
         $.each buttons, (index, button) ->
             $button = $("""<button type="#{button.type}"></button>""")
                 .text(button.text)
                 .addClass(button.className + ' vex-dialog-button ' + (if index is 0 then 'vex-first ' else '') + (if index is buttons.length - 1 then 'vex-last ' else ''))
-                .bind('click.vex', (e) -> button.click($(@).parents(vex.getSelectorFromBaseClass(vex.baseClassNames.content)), e) if button.click)
+                .bind('click.vex', (e) -> button.click($(@).parents(vex.getSelectorFromBaseClass(vex.baseClassNames.wrapper)), e) if button.click)
 
             $button.appendTo $buttons
 

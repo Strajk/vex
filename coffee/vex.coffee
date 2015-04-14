@@ -23,16 +23,17 @@ vexFactory = ($) ->
 
         baseClassNames:
             vex: 'vex'
+            wrapper: 'vex-wrapper'
             header: 'vex-header'
-            content: 'vex-content'
+            body: 'vex-body'
             overlay: 'vex-overlay'
             close: 'vex-close'
             closing: 'vex-closing'
             open: 'vex-open'
 
         defaultOptions:
-            header: ''
             content: ''
+            header: ''
             showCloseButton: true
             escapeButtonCloses: true
             overlayClosesOnClick: true
@@ -41,8 +42,8 @@ vexFactory = ($) ->
             css: {}
             overlayClassName: ''
             overlayCSS: {}
-            contentClassName: ''
-            contentCSS: {}
+            wrapperClassName: ''
+            wrapperCSS: {}
             closeClassName: ''
             closeCSS: {}
 
@@ -75,25 +76,27 @@ vexFactory = ($) ->
 
             options.$vex.append options.$vexOverlay
 
-            # Content
+            # Wrapper
 
             if options.header
-                options.$vexHeadline = $('<div>')
+                options.$vexHeader = $('<div>')
                     .addClass(vex.baseClassNames.header)
                     .append(options.header);
             else
-                options.$vex.addClass("_no-header");
+                # Search inside of the content
+                if ($(options.content).find("." + vex.baseClassNames.header).length == 0)
+                    options.$vex.addClass("_no-header");
 
 
-            options.$vexContent = $('<div>')
-                .addClass(vex.baseClassNames.content)
-                .addClass(options.contentClassName)
-                .css(options.contentCSS)
-                .append(options.$vexHeadline)
+            options.$vexWrapper = $('<div>')
+                .addClass(vex.baseClassNames.wrapper)
+                .addClass(options.wrapperClassName)
+                .css(options.wrapperCSS)
+                .append(options.$vexHeader)
                 .append(options.content)
                 .data(vex: options)
 
-            options.$vex.append options.$vexContent
+            options.$vex.append options.$vexWrapper
 
             # Close button
 
@@ -105,7 +108,7 @@ vexFactory = ($) ->
                     .data(vex: options)
                     .bind('click.vex', -> vex.close $(@).data().vex.id)
 
-                options.$vexContent.append options.$closeButton
+                options.$vexWrapper.append options.$closeButton
 
             # Inject DOM and trigger callbacks/events
 
@@ -117,16 +120,16 @@ vexFactory = ($) ->
 
             # Call afterOpen callback and trigger vexOpen event
 
-            options.afterOpen options.$vexContent, options if options.afterOpen
-            setTimeout (-> options.$vexContent.trigger 'vexOpen', options), 0
+            options.afterOpen options.$vexWrapper, options if options.afterOpen
+            setTimeout (-> options.$vexWrapper.trigger 'vexOpen', options), 0
 
-            return options.$vexContent # For chaining
+            return options.$vexWrapper # For chaining
 
         getSelectorFromBaseClass: (baseClass) ->
             return ".#{baseClass.split(' ').join('.')}"
 
         getAllVexes: ->
-            return $(""".#{vex.baseClassNames.vex}:not(".#{vex.baseClassNames.closing}") #{vex.getSelectorFromBaseClass(vex.baseClassNames.content)}""")
+            return $(""".#{vex.baseClassNames.vex}:not(".#{vex.baseClassNames.closing}") #{vex.getSelectorFromBaseClass(vex.baseClassNames.wrapper)}""")
 
         getVexByID: (id) ->
             return vex.getAllVexes().filter(-> $(@).data().vex.id is id)
@@ -148,21 +151,21 @@ vexFactory = ($) ->
             return true
 
         closeByID: (id) ->
-            $vexContent = vex.getVexByID id
-            return unless $vexContent.length
+            $vexWrapper = vex.getVexByID id
+            return unless $vexWrapper.length
 
-            $vex = $vexContent.data().vex.$vex
+            $vex = $vexWrapper.data().vex.$vex
 
-            options = $.extend {}, $vexContent.data().vex
+            options = $.extend {}, $vexWrapper.data().vex
 
             beforeClose = ->
-                options.beforeClose $vexContent, options if options.beforeClose
+                options.beforeClose $vexWrapper, options if options.beforeClose
 
             close = ->
-                $vexContent.trigger 'vexClose', options
+                $vexWrapper.trigger 'vexClose', options
                 $vex.remove()
-                $('body').trigger 'vexAfterClose', options # Triggered on the body since $vexContent was removed
-                options.afterClose $vexContent, options if options.afterClose
+                $('body').trigger 'vexAfterClose', options # Triggered on the body since $vexWrapper was removed
+                options.afterClose $vexWrapper, options if options.afterClose
 
             if animationEndSupport
                 unless beforeClose() is false

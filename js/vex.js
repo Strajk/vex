@@ -19,16 +19,17 @@
       animationEndEvent: 'animationend webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend',
       baseClassNames: {
         vex: 'vex',
+        wrapper: 'vex-wrapper',
         header: 'vex-header',
-        content: 'vex-content',
+        body: 'vex-body',
         overlay: 'vex-overlay',
         close: 'vex-close',
         closing: 'vex-closing',
         open: 'vex-open'
       },
       defaultOptions: {
-        header: '',
         content: '',
+        header: '',
         showCloseButton: true,
         escapeButtonCloses: true,
         overlayClosesOnClick: true,
@@ -37,8 +38,8 @@
         css: {},
         overlayClassName: '',
         overlayCSS: {},
-        contentClassName: '',
-        contentCSS: {},
+        wrapperClassName: '',
+        wrapperCSS: {},
         closeClassName: '',
         closeCSS: {}
       },
@@ -62,37 +63,39 @@
         }
         options.$vex.append(options.$vexOverlay);
         if (options.header) {
-          options.$vexHeadline = $('<div>').addClass(vex.baseClassNames.header).append(options.header);
+          options.$vexHeader = $('<div>').addClass(vex.baseClassNames.header).append(options.header);
         } else {
-          options.$vex.addClass("_no-header");
+          if ($(options.content).find("." + vex.baseClassNames.header).length === 0) {
+            options.$vex.addClass("_no-header");
+          }
         }
-        options.$vexContent = $('<div>').addClass(vex.baseClassNames.content).addClass(options.contentClassName).css(options.contentCSS).append(options.$vexHeadline).append(options.content).data({
+        options.$vexWrapper = $('<div>').addClass(vex.baseClassNames.wrapper).addClass(options.wrapperClassName).css(options.wrapperCSS).append(options.$vexHeader).append(options.content).data({
           vex: options
         });
-        options.$vex.append(options.$vexContent);
+        options.$vex.append(options.$vexWrapper);
         if (options.showCloseButton) {
           options.$closeButton = $('<div>').addClass(vex.baseClassNames.close).addClass(options.closeClassName).css(options.closeCSS).data({
             vex: options
           }).bind('click.vex', function() {
             return vex.close($(this).data().vex.id);
           });
-          options.$vexContent.append(options.$closeButton);
+          options.$vexWrapper.append(options.$closeButton);
         }
         $(options.appendLocation).append(options.$vex);
         vex.setupBodyClassName(options.$vex);
         if (options.afterOpen) {
-          options.afterOpen(options.$vexContent, options);
+          options.afterOpen(options.$vexWrapper, options);
         }
         setTimeout((function() {
-          return options.$vexContent.trigger('vexOpen', options);
+          return options.$vexWrapper.trigger('vexOpen', options);
         }), 0);
-        return options.$vexContent;
+        return options.$vexWrapper;
       },
       getSelectorFromBaseClass: function(baseClass) {
         return "." + (baseClass.split(' ').join('.'));
       },
       getAllVexes: function() {
-        return $("." + vex.baseClassNames.vex + ":not(\"." + vex.baseClassNames.closing + "\") " + (vex.getSelectorFromBaseClass(vex.baseClassNames.content)));
+        return $("." + vex.baseClassNames.vex + ":not(\"." + vex.baseClassNames.closing + "\") " + (vex.getSelectorFromBaseClass(vex.baseClassNames.wrapper)));
       },
       getVexByID: function(id) {
         return vex.getAllVexes().filter(function() {
@@ -124,24 +127,24 @@
         return true;
       },
       closeByID: function(id) {
-        var $vex, $vexContent, beforeClose, close, options;
-        $vexContent = vex.getVexByID(id);
-        if (!$vexContent.length) {
+        var $vex, $vexWrapper, beforeClose, close, options;
+        $vexWrapper = vex.getVexByID(id);
+        if (!$vexWrapper.length) {
           return;
         }
-        $vex = $vexContent.data().vex.$vex;
-        options = $.extend({}, $vexContent.data().vex);
+        $vex = $vexWrapper.data().vex.$vex;
+        options = $.extend({}, $vexWrapper.data().vex);
         beforeClose = function() {
           if (options.beforeClose) {
-            return options.beforeClose($vexContent, options);
+            return options.beforeClose($vexWrapper, options);
           }
         };
         close = function() {
-          $vexContent.trigger('vexClose', options);
+          $vexWrapper.trigger('vexClose', options);
           $vex.remove();
           $('body').trigger('vexAfterClose', options);
           if (options.afterClose) {
-            return options.afterClose($vexContent, options);
+            return options.afterClose($vexWrapper, options);
           }
         };
         if (animationEndSupport) {

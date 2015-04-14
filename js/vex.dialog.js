@@ -26,15 +26,15 @@
       YES: {
         text: 'OK',
         type: 'submit',
-        className: 'vex-dialog-button-primary'
+        className: 'btn _primary'
       },
       NO: {
         text: 'Cancel',
         type: 'button',
-        className: 'vex-dialog-button-secondary',
-        click: function($vexContent, event) {
-          $vexContent.data().vex.value = false;
-          return vex.close($vexContent.data().vex.id);
+        className: 'btn _secondary',
+        click: function($vexWrapper, event) {
+          $vexWrapper.data().vex.value = false;
+          return vex.close($vexWrapper.data().vex.id);
         }
       }
     };
@@ -47,17 +47,18 @@
       buttons: [dialog.buttons.YES, dialog.buttons.NO],
       showCloseButton: false,
       onSubmit: function(event) {
-        var $form, $vexContent;
+        var $form, $vexWrapper;
         $form = $(this);
-        $vexContent = $form.parent();
+        $vexWrapper = $form.parent();
         event.preventDefault();
         event.stopPropagation();
-        $vexContent.data().vex.value = dialog.getFormValueOnSubmit($formToObject($form));
-        return vex.close($vexContent.data().vex.id);
+        $vexWrapper.data().vex.value = dialog.getFormValueOnSubmit($formToObject($form));
+        return vex.close($vexWrapper.data().vex.id);
       },
       focusFirstInput: true
     };
     dialog.defaultAlertOptions = {
+      className: '_alert',
       message: 'Alert',
       buttons: [dialog.buttons.YES]
     };
@@ -65,19 +66,21 @@
       message: 'Confirm'
     };
     dialog.open = function(options) {
-      var $vexContent, beforeClose;
+      var $vexWrapper, beforeClose, body;
       options = $.extend({}, vex.defaultOptions, dialog.defaultOptions, options);
-      options.content = dialog.buildDialogForm(options);
+      body = dialog.buildDialogForm(options);
+      options.wrapper = $('<div>').addClass(vex.baseClassNames.body);
+      options.wrapper.append(body);
       beforeClose = options.beforeClose;
-      options.beforeClose = function($vexContent, config) {
+      options.beforeClose = function($vexWrapper, config) {
         options.callback(config.value);
-        return typeof beforeClose === "function" ? beforeClose($vexContent, config) : void 0;
+        return typeof beforeClose === "function" ? beforeClose($vexWrapper, config) : void 0;
       };
-      $vexContent = vex.open(options);
+      $vexWrapper = vex.open(options);
       if (options.focusFirstInput) {
-        $vexContent.find('button[type="submit"], button[type="button"], input[type="submit"], input[type="button"], textarea, input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="email"], input[type="month"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="time"], input[type="url"], input[type="week"]').first().focus();
+        $vexWrapper.find('button[type="submit"], button[type="button"], input[type="submit"], input[type="button"], textarea, input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="email"], input[type="month"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="time"], input[type="url"], input[type="week"]').first().focus();
       }
-      return $vexContent;
+      return $vexWrapper;
     };
     dialog.alert = function(options) {
       if (typeof options === 'string') {
@@ -127,12 +130,12 @@
     };
     dialog.buttonsToDOM = function(buttons) {
       var $buttons;
-      $buttons = $('<div class="vex-dialog-buttons" />');
+      $buttons = $('<div class="vex-actions" />');
       $.each(buttons, function(index, button) {
         var $button;
         $button = $("<button type=\"" + button.type + "\"></button>").text(button.text).addClass(button.className + ' vex-dialog-button ' + (index === 0 ? 'vex-first ' : '') + (index === buttons.length - 1 ? 'vex-last ' : '')).bind('click.vex', function(e) {
           if (button.click) {
-            return button.click($(this).parents(vex.getSelectorFromBaseClass(vex.baseClassNames.content)), e);
+            return button.click($(this).parents(vex.getSelectorFromBaseClass(vex.baseClassNames.wrapper)), e);
           }
         });
         return $button.appendTo($buttons);
