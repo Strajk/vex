@@ -49,7 +49,7 @@
       onSubmit: function(event) {
         var $form, $vexWrapper;
         $form = $(this);
-        $vexWrapper = $form.parent();
+        $vexWrapper = $form.parent().parent();
         event.preventDefault();
         event.stopPropagation();
         $vexWrapper.data().vex.value = dialog.getFormValueOnSubmit($formToObject($form));
@@ -66,11 +66,9 @@
       message: 'Confirm'
     };
     dialog.open = function(options) {
-      var $vexWrapper, beforeClose, body;
+      var $vexWrapper, beforeClose;
       options = $.extend({}, vex.defaultOptions, dialog.defaultOptions, options);
-      body = dialog.buildDialogForm(options);
-      options.wrapper = $('<div>').addClass(vex.baseClassNames.body);
-      options.wrapper.append(body);
+      options.content = dialog.buildDialogForm(options);
       beforeClose = options.beforeClose;
       options.beforeClose = function($vexWrapper, config) {
         options.callback(config.value);

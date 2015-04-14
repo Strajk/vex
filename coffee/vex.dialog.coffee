@@ -42,7 +42,7 @@ vexDialogFactory = ($, vex) ->
         showCloseButton: false
         onSubmit: (event) ->
             $form = $ @
-            $vexWrapper = $form.parent()
+            $vexWrapper = $form.parent().parent()
             event.preventDefault()
             event.stopPropagation()
             $vexWrapper.data().vex.value = dialog.getFormValueOnSubmit $formToObject $form
@@ -61,9 +61,7 @@ vexDialogFactory = ($, vex) ->
 
     dialog.open = (options) ->
         options = $.extend {}, vex.defaultOptions, dialog.defaultOptions, options
-        body = dialog.buildDialogForm options
-        options.wrapper = $('<div>').addClass(vex.baseClassNames.body)
-        options.wrapper.append body
+        options.content = dialog.buildDialogForm options
 
         beforeClose = options.beforeClose
         options.beforeClose = ($vexWrapper, config) ->

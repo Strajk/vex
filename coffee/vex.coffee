@@ -83,9 +83,7 @@ vexFactory = ($) ->
                     .addClass(vex.baseClassNames.header)
                     .append(options.header);
             else
-                # Search inside of the content
-                if ($(options.content).find("." + vex.baseClassNames.header).length == 0)
-                    options.$vex.addClass("_no-header");
+                options.$vex.addClass("_no-header");
 
 
             options.$vexWrapper = $('<div>')
@@ -93,7 +91,7 @@ vexFactory = ($) ->
                 .addClass(options.wrapperClassName)
                 .css(options.wrapperCSS)
                 .append(options.$vexHeader)
-                .append(options.content)
+                .append($('<div>').addClass(vex.baseClassNames.body).append(options.content))
                 .data(vex: options)
 
             options.$vex.append options.$vexWrapper

@@ -65,11 +65,9 @@
         if (options.header) {
           options.$vexHeader = $('<div>').addClass(vex.baseClassNames.header).append(options.header);
         } else {
-          if ($(options.content).find("." + vex.baseClassNames.header).length === 0) {
-            options.$vex.addClass("_no-header");
-          }
+          options.$vex.addClass("_no-header");
         }
-        options.$vexWrapper = $('<div>').addClass(vex.baseClassNames.wrapper).addClass(options.wrapperClassName).css(options.wrapperCSS).append(options.$vexHeader).append(options.content).data({
+        options.$vexWrapper = $('<div>').addClass(vex.baseClassNames.wrapper).addClass(options.wrapperClassName).css(options.wrapperCSS).append(options.$vexHeader).append($('<div>').addClass(vex.baseClassNames.body).append(options.content)).data({
           vex: options
         });
         options.$vex.append(options.$vexWrapper);
