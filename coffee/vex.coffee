@@ -25,6 +25,7 @@ vexFactory = ($) ->
             vex: 'vex'
             wrapper: 'vex-wrapper'
             header: 'vex-header'
+            footer: 'vex-footer'
             body: 'vex-body'
             overlay: 'vex-overlay'
             close: 'vex-close'
@@ -34,6 +35,7 @@ vexFactory = ($) ->
         defaultOptions:
             content: ''
             header: ''
+            footer: ''
             showCloseButton: true
             escapeButtonCloses: true
             overlayClosesOnClick: true
@@ -85,6 +87,12 @@ vexFactory = ($) ->
             else
                 options.$vex.addClass("_no-header");
 
+            if options.footer
+                options.$vexFooter = $('<div>')
+                    .addClass(vex.baseClassNames.footer)
+                    .append(options.footer);
+            else
+                options.$vex.addClass("_no-footer");
 
             options.$vexWrapper = $('<div>')
                 .addClass(vex.baseClassNames.wrapper)
@@ -92,6 +100,7 @@ vexFactory = ($) ->
                 .css(options.wrapperCSS)
                 .append(options.$vexHeader)
                 .append($('<div>').addClass(vex.baseClassNames.body).append(options.content))
+                .append(options.$vexFooter)
                 .data(vex: options)
 
             options.$vex.append options.$vexWrapper
