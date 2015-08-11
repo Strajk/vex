@@ -26,12 +26,12 @@
       YES: {
         text: 'OK',
         type: 'submit',
-        className: 'btn _primary'
+        className: 'spBtn'
       },
       NO: {
         text: 'Cancel',
         type: 'button',
-        className: 'btn _secondary',
+        className: 'spBtn _secondary',
         click: function($vexWrapper, event) {
           $vexWrapper.data().vex.value = false;
           return vex.close($vexWrapper.data().vex.id);

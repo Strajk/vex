@@ -19,12 +19,12 @@ vexDialogFactory = ($, vex) ->
         YES:
             text: 'OK'
             type: 'submit'
-            className: 'btn _primary'
+            className: 'spBtn'
 
         NO:
             text: 'Cancel'
             type: 'button'
-            className: 'btn _secondary'
+            className: 'spBtn _secondary'
             click: ($vexWrapper, event) ->
                 $vexWrapper.data().vex.value = false
                 vex.close $vexWrapper.data().vex.id
